@@ -1,0 +1,1 @@
+start cmd.exe /k "cd C:\Users\amado\OneDrive\AMADO MATUTE\Documentos\UNAH\LP4\LP4-REDSOCIAL-API\api && npm start"
