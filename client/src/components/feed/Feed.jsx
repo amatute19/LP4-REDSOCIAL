@@ -66,8 +66,8 @@ export default function Feed({username}) {
       useEffect(() => {
         const fetchPosts = async () => {
           const res = username 
-            ? await axios.get("http://localhost:5000/api/posts/profile/" + username)
-            : await axios.get("http://localhost:5000/api/posts/timeline/667f78dd19cd12cb532cac50");
+            ? await axios.get("/posts/profile/" + username)
+            : await axios.get("/posts/timeline/667f78dd19cd12cb532cac50");
           setPosts(res.data);
         };
         fetchPosts();        
