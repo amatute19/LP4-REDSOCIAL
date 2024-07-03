@@ -24,7 +24,7 @@ const UserSchema = new mongoose.Schema({
 
     },
 
-    ProfilePicture: {
+    profilePicture: {
         type: String,      
         default: ""
     },
@@ -64,7 +64,7 @@ const UserSchema = new mongoose.Schema({
         max:50
     },
 
-    relationships:{
+    relationship:{
         type: Number,
         enum: [1, 2, 3,],
     },
