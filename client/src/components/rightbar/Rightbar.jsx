@@ -1,32 +1,51 @@
 import "./rightbar.css";
 import { Users } from "../../dummyData";
 import Online from "../online/Online";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { Link } from "react-router-dom";
 
 export default function Rightbar({ user }) {
-
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
+  const [friends, setFriends] = useState([]);
 
-  const HomeRightbar = () => {
-    return (
-      <>
-        <div className="birthdayContainer">
-          <img className="birthdayImg" src="assets/gift.png" alt="" />
-          <span className="birthdayText">
-            <b>Pola Foster</b> and <b>3 other friends</b> have a birhday today.
-          </span>
-        </div>
-        <img className="rightbarAd" src="assets/ad.png" alt="" />
-        <h4 className="rightbarTitle">Online Friends</h4>
-        <ul className="rightbarFriendList">
-          {Users.map((u) => (
-            <Online key={u.id} user={u} />
-          ))}
-        </ul>
-      </>
-    );
-  };
+  useEffect(() => {
+    const getFriends = async () => {
+      if (!user || !user._id) return;
+      try {
+        const friendList = await axios.get(`/users/friends/${user._id}`);
+        setFriends(friendList.data);
+      } catch (err) {
+        console.error("Error fetching friends:", err);
+      }
+    };
+    getFriends();
+  }, [user]);
+
+  const HomeRightbar = () => (
+    <>
+      <div className="birthdayContainer">
+        <img className="birthdayImg" src="assets/gift.png" alt="Gift" />
+        <span className="birthdayText">
+          <b>Pola Foster</b> and <b>3 other friends</b> have a birthday today.
+        </span>
+      </div>
+      <img className="rightbarAd" src="assets/ad.png" alt="Ad" />
+      <h4 className="rightbarTitle">Online Friends</h4>
+      <ul className="rightbarFriendList">
+        {Users.map((u) => (
+          <Online key={u.id} user={u} />
+        ))}
+      </ul>
+    </>
+  );
 
   const ProfileRightbar = () => {
+    if (!user) return <div>Loading...</div>;
+
+    const relationshipStatus =
+      user.relationship === 1 ? "Single" : user.relationship === 2 ? "Married" : "-";
+
     return (
       <>
         <h4 className="rightbarTitle">User information</h4>
@@ -41,74 +60,31 @@ export default function Rightbar({ user }) {
           </div>
           <div className="rightbarInfoItem">
             <span className="rightbarInfoKey">Relationship:</span>
-            <span className="rightbarInfoValue">
-              {user.relationship ===1 
-              ? "Single" 
-              : user.relationship ===1 
-              ? "Married" 
-              : "-"}
-              </span>
+            <span className="rightbarInfoValue">{relationshipStatus}</span>
           </div>
         </div>
         <h4 className="rightbarTitle">User friends</h4>
         <div className="rightbarFollowings">
-          <div className="rightbarFollowing">
-            <img
-              src={`${PF}person/1.jpeg`}
-              alt=""
-              className="rightbarFollowingImg"
-            />
-            <span className="rightbarFollowingName">John Carter</span>
-          </div>
-          <div className="rightbarFollowing">
-            <img
-              src={`${PF}person/2.jpeg`}
-              alt=""
-              className="rightbarFollowingImg"
-            />
-            <span className="rightbarFollowingName">John Carter</span>
-          </div>
-          <div className="rightbarFollowing">
-            <img
-              src={`${PF}person/3.jpeg`}
-              alt=""
-              className="rightbarFollowingImg"
-            />
-            <span className="rightbarFollowingName">John Carter</span>
-          </div>
-          <div className="rightbarFollowing">
-            <img
-              src={`${PF}person/4.jpeg`}
-              alt=""
-              className="rightbarFollowingImg"
-            />
-            <span className="rightbarFollowingName">John Carter</span>
-          </div>
-          <div className="rightbarFollowing">
-            <img
-              src={`${PF}person/5.jpeg`}
-              alt=""
-              className="rightbarFollowingImg"
-            />
-            <span className="rightbarFollowingName">John Carter</span>
-          </div>
-          <div className="rightbarFollowing">
-            <img
-              src={`${PF}person/6.jpeg`}
-              alt=""
-              className="rightbarFollowingImg"
-            />
-            <span className="rightbarFollowingName">John Carter</span>
-          </div>
+          {friends.map((friend) => (
+            <Link to={"/profile/" + friend.username} key={friend._id} style={{ textDecoration: "none" }}>
+              <div className="rightbarFollowing">
+                <img
+                  src={friend.profilePicture ? PF + friend.profilePicture : PF + "person/noAvatar.png"}
+                  alt=""
+                  className="rightbarFollowingImg"
+                />
+                <span className="rightbarFollowingName">{friend.username}</span>
+              </div>
+            </Link>
+          ))}
         </div>
       </>
     );
   };
+
   return (
     <div className="rightbar">
-      <div className="rightbarWrapper">
-        {user ? <ProfileRightbar /> : <HomeRightbar />}
-      </div>
+      <div className="rightbarWrapper">{user ? <ProfileRightbar /> : <HomeRightbar />}</div>
     </div>
   );
 }
