@@ -29,13 +29,17 @@ export default function Register() {
     }
   };
 
+  const handleLoginClick = () => {
+    navigate("/login");
+  };
+
   return (
     <div className="login">
       <div className="loginWrapper">
         <div className="loginLeft">
-          <h3 className="loginLogo">Lamasocial</h3>
+          <h3 className="loginLogo">PhotoFUSION</h3>
           <span className="loginDesc">
-            Connect with friends and the world around you on Lamasocial.
+            Connect with friends and the world around you on PhotoFUSION.
           </span>
         </div>
         <div className="loginRight">
@@ -69,9 +73,14 @@ export default function Register() {
               type="password"
             />
             <button className="loginButton" type="submit">
-              Sign Up
+            Sign Up
             </button>
-            <button className="loginRegisterButton">Log into Account</button>
+            <button 
+              className="loginRegisterButton" 
+              type="button" 
+              onClick={handleLoginClick}>
+              Log into Account
+            </button>
           </form>
         </div>
       </div>
