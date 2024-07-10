@@ -41,7 +41,7 @@ router.delete("/:id", async (req, res) => {
       await post.deleteOne();
       res.status(200).json("EL post ha sido eliminado");
     } else {
-      res.status(403).json("Solo tu puedes borrar tu post");
+      res.status(403).json("No puedes borrar post de otros usuarios");
     }
   } catch (err) {
     res.status(500).json(err);
