@@ -7,21 +7,22 @@ import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext";
 
 function App() {
-  const { user } = useContext(AuthContext);
+  const { user } = useContext(AuthContext); // Obtiene el usuario del contexto de autenticación
 
   return (
     <Router>
       <Routes>
-        <Route path="/" element={user ? <Home /> : <Register />} />
-        <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
-        <Route path="/register" element={user ? <Navigate to="/" /> : <Register />} />
-        <Route path="/profile/:username" element={<Profile />} />
+        <Route path="/" element={user ? <Home /> : <Register />} /> {/* Redirige a Home si está autenticado, de lo contrario a Register */}
+        <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} /> {/* Redirige a Home si está autenticado, de lo contrario a Login */}
+        <Route path="/register" element={user ? <Navigate to="/" /> : <Register />} /> {/* Redirige a Home si está autenticado, de lo contrario a Register */}
+        <Route path="/profile/:username" element={<Profile />} /> {/* Ruta accesible para todos */}
       </Routes>
     </Router>
   );
 }
 
 export default App;
+
 
 
 

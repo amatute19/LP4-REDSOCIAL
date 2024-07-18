@@ -11,12 +11,12 @@ export default function Rightbar({ user }) {
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
   const [friends, setFriends] = useState([]);
   const { user: currentUser, dispatch } = useContext(AuthContext);
-  const [followed, setFollowed] = useState(false);
+  const [followed, setFollowed] = useState(currentUser.followings.includes(user?.id));
 
   useEffect(() => {
     if (currentUser && user) {
       // Verifica si el usuario actual sigue al usuario en cuestión
-      setFollowed(currentUser.followings.includes(user.id));
+      setFollowed(currentUser.followings.includes(user?.id));
     }
   }, [currentUser, user]);
 
@@ -34,26 +34,43 @@ export default function Rightbar({ user }) {
   }, [user]);
 
   const handleClick = async () => {
-    if (!user || !currentUser) return;
     try {
       if (followed) {
-        await axios.put(`/users/${user._id}/unfollow`, {
+        await axios.put("/users/" + user._id + "/unfollow", {
           userId: currentUser._id,
         });
-        dispatch({ type: "UNFOLLOW", payload: user._id });
-        console.log("Unfollowed user:", user._id); // Añadido para depuración
-      } else {
-        await axios.put(`/users/${user._id}/follow`, {
+        dispatch({type:"UNFOLLOW", payload:user._id})
+      }else {
+        await axios.put("/users/" + user._id + "/follow", {
           userId: currentUser._id,
         });
-        dispatch({ type: "FOLLOW", payload: user._id });
-        console.log("Followed user:", user._id); // Añadido para depuración
+        dispatch({type:"FOLLOW", payload:user._id});
       }
-      setFollowed(!followed);
     } catch (err) {
-      console.error("Error following/unfollowing user:", err);
+      console.log("Error following/unfollowing user:", err);
     }
+    setFollowed(!followed);
   };
+
+  // const handleClick = async () => {
+  //   try {
+  //     if (followed) {
+  //       await axios.put(`/users/${user._id}/unfollow`, {
+  //         userId: currentUser._id,
+  //       });
+  //       dispatch({type:"UNFOLLOW", payload:user._id})
+  //     }else {
+  //       await axios.put(`/users/${user._id}/follow`, {
+  //         userId: currentUser._id,
+  //       });
+  //       dispatch({type:"FOLLOW", payload:user._id});
+  //     }
+  //   } catch (err) {
+  //     console.log("Error following/unfollowing user:", err);
+  //   }
+  //   setFollowed(!followed);
+  // };
+
 
   const HomeRightbar = () => (
     <>

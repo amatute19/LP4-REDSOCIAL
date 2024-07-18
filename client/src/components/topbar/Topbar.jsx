@@ -1,12 +1,21 @@
 import "./topbar.css";
 import { Search, Person, Chat, Notifications } from "@material-ui/icons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 
 export default function Topbar() {
-  const { user } = useContext(AuthContext);
+  const { user, dispatch } = useContext(AuthContext);
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    // Limpiar el contexto de autenticación
+    dispatch({ type: "LOGOUT" });
+    // Redirigir a la página de registro
+    navigate("/register");
+  };
+
   return (
     <div className="topbarContainer">
       <div className="topbarLeft">
@@ -53,6 +62,9 @@ export default function Topbar() {
             className="topbarImg"
           />
         </Link>
+        <button className="topbarLogoutButton" onClick={handleLogout}>
+          Logout
+        </button>
       </div>
     </div>
   );
