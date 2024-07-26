@@ -1,4 +1,5 @@
 import { useContext, useRef } from "react";
+import { useNavigate } from "react-router-dom"; // Importar useNavigate
 import "./login.css";
 import { loginCall } from "../../apiCalls";
 import { AuthContext } from "../../context/AuthContext";
@@ -8,6 +9,7 @@ export default function Login() {
   const email = useRef();
   const password = useRef();
   const { isFetching, dispatch } = useContext(AuthContext);
+  const navigate = useNavigate(); // Usar useNavigate
 
   const handleClick = (e) => {
     e.preventDefault();
@@ -15,6 +17,10 @@ export default function Login() {
       { email: email.current.value, password: password.current.value },
       dispatch
     );
+  };
+
+  const handleRegisterClick = () => {
+    navigate("/register"); // Redirigir a la página de registro
   };
 
   return (
@@ -51,7 +57,11 @@ export default function Login() {
               )}
             </button>
             <span className="loginForgot">Forgot Password?</span>
-            <button className="loginRegisterButton">
+            <button
+              className="loginRegisterButton"
+              type="button" // Cambiar el tipo a button para evitar el submit del formulario
+              onClick={handleRegisterClick} // Manejar el clic del botón
+            >
               {isFetching ? (
                 <CircularProgress color="primary" size="20px" />
               ) : (
