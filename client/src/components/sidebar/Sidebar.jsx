@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import "./sidebar.css";
 import {
   RssFeed,
@@ -19,8 +20,10 @@ export default function Sidebar() {
       <div className="sidebarWrapper">
         <ul className="sidebarList">
           <li className="sidebarListItem">
-            <RssFeed className="sidebarIcon" />
-            <span className="sidebarListItemText">Feed</span>
+            <Link to="/" style={{ textDecoration: "none" }}>
+              <RssFeed className="sidebarIcon" />
+              <span className="sidebarListItemText">Feed</span>
+            </Link>
           </li>
           <li className="sidebarListItem">
             <Chat className="sidebarIcon" />

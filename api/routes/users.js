@@ -127,6 +127,17 @@ router.put("/:id/unfollow", async (req, res) => {
   });
 
 
+  // Buscar usuarios por nombre
+router.get("/search", async (req, res) => {
+  const query = req.query.q;
+  try {
+    const users = await User.find({ username: { $regex: query, $options: "i" } }).limit(10);
+    res.status(200).json(users);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+
+
 module.exports = router;
-
-

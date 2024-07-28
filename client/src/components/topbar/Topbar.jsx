@@ -1,7 +1,8 @@
 import "./topbar.css";
 import { Search, Person, Chat, Notifications } from "@material-ui/icons";
 import { Link, useNavigate } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useState, useEffect } from "react";
+import axios from "axios";
 import { AuthContext } from "../../context/AuthContext";
 
 export default function Topbar() {
@@ -9,12 +10,31 @@ export default function Topbar() {
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
   const navigate = useNavigate();
 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+
   const handleLogout = () => {
     // Limpiar el contexto de autenticación
     dispatch({ type: "LOGOUT" });
     // Redirigir a la página de registro
     navigate("/register");
   };
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      if (searchTerm.trim()) {
+        try {
+          const res = await axios.get(`/users/search?q=${searchTerm}`);
+          setSearchResults(res.data);
+        } catch (err) {
+          console.error(err);
+        }
+      } else {
+        setSearchResults([]);
+      }
+    };
+    fetchUsers();
+  }, [searchTerm]);
 
   return (
     <div className="topbarContainer">
@@ -27,16 +47,23 @@ export default function Topbar() {
         <div className="searchbar">
           <Search className="searchIcon" />
           <input
-            placeholder="Search for friend, post or video"
+            placeholder="Search for friend."
             className="searchInput"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
+          {searchResults.length > 0 && (
+            <ul className="searchResults">
+              {searchResults.map((user) => (
+                <Link to={`/profile/${user.username}`} key={user._id} style={{ textDecoration: "none", color: "black" }}>
+                  <li className="searchResultItem">{user.username}</li>
+                </Link>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
       <div className="topbarRight">
-        <div className="topbarLinks">
-          <span className="topbarLink">Homepage</span>
-          <span className="topbarLink">Timeline</span>
-        </div>
         <div className="topbarIcons">
           <div className="topbarIconItem">
             <Person />
