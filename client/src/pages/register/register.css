@@ -1,7 +1,8 @@
 .login {
   width: 100vw;
   height: 100vh;
-  background-color: #f0f2f5;
+  background: url('../../../public/assets/cameras_Fondo.jpg') no-repeat center center fixed;
+  background-size: cover;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -24,61 +25,91 @@
 .loginLogo {
   font-size: 50px;
   font-weight: 800;
-  color: #1775ee;
+  color: #a2a8b1;
   margin-bottom: 10px;
 }
 
 .loginDesc {
   font-size: 24px;
+  color: #f9f9fa;
 }
 
-.loginBox{
-    height: 400px;
-    padding: 20px;
-    background-color: white;
-    border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+.loginBox {
+  height: 400px;
+  padding: 20px;
+  background-color: rgb(212, 209, 209);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-.loginInput{
-    height: 50px;
-    border-radius: 10px;
-    border: 1px solid gray;
-    font-size: 18px;
-    padding-left: 20px;
+/* Input fields */
+.loginInput {
+  height: 50px;
+  border-radius: 10px;
+  border: 1px solid #a2a8b1;
+  font-size: 18px;
+  padding-left: 20px;
+  transition: background-color 0.3s, border-color 0.3s; /* Smooth transition */
 }
 
-.loginInput:focus{
-    outline: none;
+.loginInput:focus {
+  outline: none;
 }
 
-.loginButton{
-    height: 50px;
-    border-radius: 10px;
-    border: none;
-    background-color: #1775ee;
-    color: white;
-    font-size: 20px;
-    font-weight: 500;
-    cursor: pointer;
+.loginInput:hover {
+  background-color: #f0f0f0; /* Lighten background on hover */
+  border-color: #8a9bb8; /* Change border color on hover */
 }
 
-.loginForgot{
-    text-align: center;
-    color: #1775ee;
+/* Login button */
+.loginButton {
+  width: 60%;
+  align-self: center;
+  height: 50px;
+  border-radius: 10px;
+  border: none;
+  background-color: #567097;
+  color: white;
+  font-size: 20px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s; /* Smooth transition */
 }
 
-.loginRegisterButton{
-    width: 60%;
-    align-self: center;
-    height: 50px;
-    border-radius: 10px;
-    border: none;
-    background-color: #42b72a;
-    color: white;
-    font-size: 20px;
-    font-weight: 500;
-    cursor: pointer;
+.loginButton:hover {
+  background-color: #5a7098; /* Darken background on hover */
+  transform: scale(1.05); /* Slightly enlarge button on hover */
+}
+
+/* Forgot password text */
+.loginForgot {
+  text-align: center;
+  color: #a2a8b1;
+  transition: color 0.3s; /* Smooth transition */
+}
+
+.loginForgot:hover {
+  color: #758fb6; /* Change text color on hover */
+}
+
+/* Register button */
+.loginRegisterButton {
+  width: 60%;
+  align-self: center;
+  height: 50px;
+  border-radius: 10px;
+  border: none;
+  background-color: #42b72a;
+  color: white;
+  font-size: 20px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s; /* Smooth transition */
+}
+
+.loginRegisterButton:hover {
+  background-color: #369321; /* Darken background on hover */
+  transform: scale(1.05); /* Slightly enlarge button on hover */
 }
