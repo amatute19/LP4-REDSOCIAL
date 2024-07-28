@@ -11,12 +11,11 @@ export default function Rightbar({ user }) {
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
   const [friends, setFriends] = useState([]);
   const { user: currentUser, dispatch } = useContext(AuthContext);
-  const [followed, setFollowed] = useState(currentUser.followings.includes(user?.id));
+  const [followed, setFollowed] = useState(false);
 
   useEffect(() => {
     if (currentUser && user) {
-      // Verifica si el usuario actual sigue al usuario en cuestión
-      setFollowed(currentUser.followings.includes(user?.id));
+      setFollowed(currentUser.followings.includes(user?._id));
     }
   }, [currentUser, user]);
 
@@ -36,41 +35,17 @@ export default function Rightbar({ user }) {
   const handleClick = async () => {
     try {
       if (followed) {
-        await axios.put("/users/" + user._id + "/unfollow", {
-          userId: currentUser._id,
-        });
-        dispatch({type:"UNFOLLOW", payload:user._id})
-      }else {
-        await axios.put("/users/" + user._id + "/follow", {
-          userId: currentUser._id,
-        });
-        dispatch({type:"FOLLOW", payload:user._id});
+        await axios.put(`/users/${user._id}/unfollow`, { userId: currentUser._id });
+        dispatch({ type: "UNFOLLOW", payload: user._id });
+      } else {
+        await axios.put(`/users/${user._id}/follow`, { userId: currentUser._id });
+        dispatch({ type: "FOLLOW", payload: user._id });
       }
+      setFollowed(!followed);
     } catch (err) {
       console.log("Error following/unfollowing user:", err);
     }
-    setFollowed(!followed);
   };
-
-  // const handleClick = async () => {
-  //   try {
-  //     if (followed) {
-  //       await axios.put(`/users/${user._id}/unfollow`, {
-  //         userId: currentUser._id,
-  //       });
-  //       dispatch({type:"UNFOLLOW", payload:user._id})
-  //     }else {
-  //       await axios.put(`/users/${user._id}/follow`, {
-  //         userId: currentUser._id,
-  //       });
-  //       dispatch({type:"FOLLOW", payload:user._id});
-  //     }
-  //   } catch (err) {
-  //     console.log("Error following/unfollowing user:", err);
-  //   }
-  //   setFollowed(!followed);
-  // };
-
 
   const HomeRightbar = () => (
     <>
@@ -93,8 +68,7 @@ export default function Rightbar({ user }) {
   const ProfileRightbar = () => {
     if (!user) return <div>Loading...</div>;
 
-    const relationshipStatus =
-      user.relationship === 1 ? "Single" : user.relationship === 2 ? "Married" : "-";
+    const relationshipStatus = user.relationship === 1 ? "Single" : user.relationship === 2 ? "Married" : "-";
 
     return (
       <>
@@ -125,9 +99,7 @@ export default function Rightbar({ user }) {
             <Link to={"/profile/" + friend.username} key={friend._id} style={{ textDecoration: "none" }}>
               <div className="rightbarFollowing">
                 <img
-                  src={friend.profilePicture 
-                    ? PF + friend.profilePicture 
-                    : PF + "person/noAvatar.png"}
+                  src={friend.profilePicture ? PF + friend.profilePicture : PF + "person/noAvatar.png"}
                   alt=""
                   className="rightbarFollowingImg"
                 />
