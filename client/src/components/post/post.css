@@ -76,3 +76,56 @@
     border-bottom: 1px dashed gray;
     font-size: 15px;
 }
+/* Estilos para el formulario de comentarios */
+
+.commentForm {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+}
+
+.commentForm input {
+  width: 95%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px; /* Asegúrate de que el tamaño de fuente sea legible */
+}
+
+.commentForm button {
+  padding: 10px;
+  background-color: #1877f2;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px; /* Asegúrate de que el tamaño de fuente sea legible */
+}
+
+.commentForm button:hover {
+  background-color: #1557a1; /* Color más oscuro al pasar el ratón sobre el botón */
+}
+
+/* Estilos para los comentarios */
+
+.comments {
+  margin-top: 10px;
+  padding: 10px;
+}
+
+.comment {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: #f9f9f9;
+}
+
+.comment strong {
+  color: #333;
+}
+
+.comment span {
+  color: #555;
+}

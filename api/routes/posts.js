@@ -105,4 +105,30 @@ router.get("/profile/:username", async (req, res) => {
   }
 });
 
+// Get comments for a post
+router.get("/:id/comments", async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    res.status(200).json(post.comments);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+// Add comment to a post
+router.post("/:id/comment", async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    const newComment = {
+      userId: req.body.userId,
+      comment: req.body.comment,
+    };
+    post.comments.push(newComment);
+    await post.save();
+    res.status(200).json(newComment); // Returning the new comment
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
 module.exports = router;
