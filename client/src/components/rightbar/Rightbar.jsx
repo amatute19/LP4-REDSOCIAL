@@ -1,6 +1,6 @@
 import "./rightbar.css";
-import { Users } from "../../dummyData";
-import Online from "../online/Online";
+// import { Users } from "../../dummyData";
+// import Online from "../online/Online";
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -50,17 +50,21 @@ export default function Rightbar({ user }) {
   const HomeRightbar = () => (
     <>
       <div className="birthdayContainer">
-        <img className="birthdayImg" src="assets/gift.png" alt="Gift" />
+        <img className="birthdayImg" src="assets/images.png" alt="Gift" />
         <span className="birthdayText">
-          <b>Pola Foster</b> and <b>3 other friends</b> have a birthday today.
+          <b>Connect</b>  <b>with our photographer friends on PhotoFUSION</b>
         </span>
       </div>
-      <img className="rightbarAd" src="assets/ad.png" alt="Ad" />
-      <h4 className="rightbarTitle">Online Friends</h4>
+      <ul>      
+      <img className="rightbarAd" src="assets/camera1.jpg" alt="Ad" />
+      <img className="rightbarAd" src="assets/camera2.jpg" alt="Ad" />
+      <img className="rightbarAd" src="assets/camera3.jpg" alt="Ad" />
+      {/* <h4 className="rightbarTitle">Online Friends</h4>
       <ul className="rightbarFriendList">
         {Users.map((u) => (
           <Online key={u.id} user={u} />
         ))}
+      </ul> */}
       </ul>
     </>
   );
