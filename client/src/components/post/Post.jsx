@@ -1,48 +1,61 @@
 import "./post.css";
 import { MoreVert } from "@material-ui/icons";
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import axios from "axios";
-import { format } from "timeago.js";
+import {format} from "timeago.js";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 
 export default function Post({ post }) {
-  const [like, setLike] = useState(post.likes.length);
-  const [isLiked, setIsLiked] = useState(false);
+  const [like,setLike] = useState(post.likes.length);
+  const [isLiked,setIsLiked] = useState(false);
   const [user, setUser] = useState({});
-  const [comments, setComments] = useState([]);
+  const [comments, setComments] = useState(post.comments || []);
   const [showCommentForm, setShowCommentForm] = useState(false);
   const [comment, setComment] = useState("");
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
-  const { user: currentUser } = useContext(AuthContext);
+  const { user:currentUser } = useContext(AuthContext);
+
+  const fetchUser = async (userId) => {
+    try {
+      const res = await axios.get(`/users?userId=${userId}`);
+      return res.data.username;
+    } catch (err) {
+      console.log(err);
+      return "Unknown User";
+    }
+  };
+
+  const fetchComments = useCallback(async () => {
+    try {
+      const res = await axios.get(`/posts/${post._id}/comments`);
+      const commentsWithUsernames = await Promise.all(
+        res.data.map(async (comment) => {
+          const username = await fetchUser(comment.userId);
+          return { ...comment, username };
+        })
+      );
+      setComments(commentsWithUsernames);
+    } catch (err) {
+      console.log(err);
+    }
+  }, [post._id]);
+
+  useEffect(() => {
+    setIsLiked(post.likes.includes(currentUser._id));
+  }, [currentUser._id, post.likes]);
 
   useEffect(() => {
     const fetchUser = async () => {
-      try {
-        const res = await axios.get(`/users?userId=${post.userId}`);
-        setUser(res.data);
-      } catch (err) {
-        console.error("Error fetching user:", err);
-      }
+      const res = await axios.get(`/users?userId=${post.userId}`);
+      setUser(res.data);
     };
-    fetchUser();        
-  }, [post.userId]);
+    fetchUser();
+  },[post.userId]);
 
   useEffect(() => {
-    const fetchComments = async () => {
-      try {
-        const res = await axios.get(`/posts/${post._id}/comments`);
-        if (Array.isArray(res.data)) {
-          setComments(res.data);
-        } else {
-          setComments([]); // Asegúrate de que sea un array si la respuesta es inesperada
-        }
-      } catch (err) {
-        console.error("Error fetching comments:", err);
-      }
-    };
     fetchComments();
-  }, [post._id]);
+  }, [fetchComments]);
 
   const handleCommentClick = () => {
     setShowCommentForm(!showCommentForm);
@@ -61,7 +74,7 @@ export default function Post({ post }) {
       });
       const newComment = {
         ...res.data,
-        username: user.username, // Se usa el `username` del estado `user`
+        username: currentUser.username, // Usar `currentUser.username`
       };
       setComments((prevComments) => [...prevComments, newComment]);
       setComment("");
@@ -106,19 +119,13 @@ export default function Post({ post }) {
         </div>
         <div className="postCenter">
           <span className="postText">{post?.desc}</span>
-          {post.img && <img className="postImg" src={post.img} alt="" />} {/* Mostrar la imagen si existe */}
+          {post.img && <img className="postImg" src={post.img} alt="" />}
         </div>
         <div className="postBottom">
           <div className="postBottomLeft">
             <img
               className="likeIcon"
               src={`${PF}like.png`}
-              onClick={likeHandler}
-              alt=""
-            />
-            <img
-              className="likeIcon"
-              src={`${PF}heart.png`}
               onClick={likeHandler}
               alt=""
             />
