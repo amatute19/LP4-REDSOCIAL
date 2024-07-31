@@ -9,6 +9,7 @@ import {
 import { useContext, useRef, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
+import { uploadFile } from "../../firebase/config";
 
 export default function Share() {
   const { user } = useContext(AuthContext);
@@ -18,25 +19,29 @@ export default function Share() {
 
   const submitHandler = async (e) => {
     e.preventDefault();
+
     const newPost = {
       userId: user._id,
       desc: desc.current.value,
     };
+
     if (file) {
-      const data = new FormData();
-      const fileName = Date.now() + file.name;
-      data.append("name", fileName);
-      data.append("file", file);
-      newPost.img = fileName;
-      console.log(newPost);
       try {
-        await axios.post("/upload", data);
-      } catch (err) {}
+        const { fileUrl, uniqueId } = await uploadFile(file);
+        newPost.img = fileUrl;
+        newPost.imgId = uniqueId; // Guardar el ID único en el post
+      } catch (err) {
+        console.error("Error uploading file:", err);
+        return; // Salir si hay un error al subir el archivo
+      }
     }
+
     try {
-      await axios.post("/posts", newPost);
+      await axios.post("http://localhost:5000/api/posts", newPost);
       window.location.reload();
-    } catch (err) {}
+    } catch (err) {
+      console.error("Error creating post:", err.response?.data || err.message);
+    }
   };
 
   return (

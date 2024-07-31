@@ -1,70 +1,48 @@
 import "./post.css";
 import { MoreVert } from "@material-ui/icons";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
-import {format} from "timeago.js";
+import { format } from "timeago.js";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 
-
 export default function Post({ post }) {
-  const [like,setLike] = useState(post.likes.length)
-  const [isLiked,setIsLiked] = useState(false)
+  const [like, setLike] = useState(post.likes.length);
+  const [isLiked, setIsLiked] = useState(false);
   const [user, setUser] = useState({});
-  const [comments, setComments] = useState(post.comments || []);
+  const [comments, setComments] = useState([]);
   const [showCommentForm, setShowCommentForm] = useState(false);
   const [comment, setComment] = useState("");
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
-  const { user:currentUser } = useContext(AuthContext);
-  // const APIURL = process.env.API_URL;
-
-
-    // Función para obtener el usuario que hizo el comentario
-    const fetchUser = async (userId) => {
-      try {
-        const res = await axios.get(`/users?userId=${userId}`);
-        return res.data.username;
-      } catch (err) {
-        console.log(err);
-        return "Unknown User";
-      }
-    };
-
-
-      // Función para obtener los comentarios del post
-  const fetchComments = useCallback(async () => {
-    try {
-      const res = await axios.get(`/posts/${post._id}/comments`);
-      const commentsWithUsernames = await Promise.all(
-        res.data.map(async (comment) => {
-          const username = await fetchUser(comment.userId);
-          return { ...comment, username };
-        })
-      );
-      setComments(commentsWithUsernames);
-    } catch (err) {
-      console.log(err);
-    }
-  }, [post._id]);
-
-  useEffect(() => {
-    // Verificar si el post está marcado como "like" por el usuario actual
-    setIsLiked(post.likes.includes(currentUser._id));
-  }, [currentUser._id, post.likes]);
-
+  const { user: currentUser } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchUser = async () => {
-      const res = await axios.get(`/users?userId=${post.userId}`);
-      setUser(res.data);
+      try {
+        const res = await axios.get(`/users?userId=${post.userId}`);
+        setUser(res.data);
+      } catch (err) {
+        console.error("Error fetching user:", err);
+      }
     };
     fetchUser();        
-    
-  },[post.userId]);
+  }, [post.userId]);
 
   useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const res = await axios.get(`/posts/${post._id}/comments`);
+        if (Array.isArray(res.data)) {
+          setComments(res.data);
+        } else {
+          setComments([]); // Asegúrate de que sea un array si la respuesta es inesperada
+        }
+      } catch (err) {
+        console.error("Error fetching comments:", err);
+      }
+    };
     fetchComments();
-  }, [fetchComments]);
+  }, [post._id]);
 
   const handleCommentClick = () => {
     setShowCommentForm(!showCommentForm);
@@ -83,7 +61,7 @@ export default function Post({ post }) {
       });
       const newComment = {
         ...res.data,
-        username: await fetchUser(currentUser._id),
+        username: user.username, // Se usa el `username` del estado `user`
       };
       setComments((prevComments) => [...prevComments, newComment]);
       setComment("");
@@ -93,12 +71,14 @@ export default function Post({ post }) {
     }
   };
 
-  const likeHandler = () => {
+  const likeHandler = async () => {
     try {
-      axios.put("/posts/" + post._id + "/like", { userId: currentUser._id });
-    } catch (err) {}
-    setLike(isLiked ? like - 1 : like + 1);
-    setIsLiked(!isLiked);
+      await axios.put("/posts/" + post._id + "/like", { userId: currentUser._id });
+      setLike(isLiked ? like - 1 : like + 1);
+      setIsLiked(!isLiked);
+    } catch (err) {
+      console.error("Error liking post:", err);
+    }
   };
 
   return (
@@ -109,7 +89,11 @@ export default function Post({ post }) {
             <Link to={`profile/${user.username}`}>
               <img
                 className="postProfileImg"
-                src={user.profilePicture ? PF + user.profilePicture : PF + "person/noAvatar.png"}
+                src={
+                  user.profilePicture
+                    ? PF + user.profilePicture
+                    : PF + "person/noAvatar.png"
+                }
                 alt=""
               />
             </Link>
@@ -122,7 +106,7 @@ export default function Post({ post }) {
         </div>
         <div className="postCenter">
           <span className="postText">{post?.desc}</span>
-          <img className="postImg" src={PF + post.img} alt="" />
+          {post.img && <img className="postImg" src={post.img} alt="" />} {/* Mostrar la imagen si existe */}
         </div>
         <div className="postBottom">
           <div className="postBottomLeft">
@@ -132,19 +116,18 @@ export default function Post({ post }) {
               onClick={likeHandler}
               alt=""
             />
-            {/* <img
+            <img
               className="likeIcon"
               src={`${PF}heart.png`}
               onClick={likeHandler}
               alt=""
-            /> */}
+            />
             <span className="postLikeCounter">{like} people like it</span>
           </div>
           <div className="postBottomRight" onClick={handleCommentClick}>
             <span className="postCommentText">{comments.length} comments</span>
           </div>
         </div>
-
         {showCommentForm && (
           <form className="commentForm" onSubmit={handleCommentSubmit}>
             <input
@@ -156,9 +139,8 @@ export default function Post({ post }) {
             <button type="submit">Enviar</button>
           </form>
         )}
-
         <div className="comments">
-          {comments.map((comment, index) => (
+          {Array.isArray(comments) && comments.map((comment, index) => (
             <div key={index} className="comment">
               <strong>{comment.username}:</strong> {comment.comment}
             </div>

@@ -63,8 +63,8 @@ router.put("/:id/like", async (req, res) => {
     res.status(500).json(err);
   }
 });
-//get a post
 
+// Obtener post por ID de usuario
 router.get("/:id", async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
@@ -130,5 +130,37 @@ router.post("/:id/comment", async (req, res) => {
     res.status(500).json(err);
   }
 });
+
+
+// Crear un post
+// router.post("/", async (req, res) => {
+//   const newPost = new Post(req.body);
+//   try {
+//     const savedPost = await newPost.save();
+//     res.status(200).json(savedPost);
+//   } catch (err) {
+//     res.status(500).json(err);
+//   }
+// });
+
+
+// Obtener todos los posts
+router.get("/", async (req, res) => {
+  try {
+    const posts = await Post.find().sort({ createdAt: -1 });
+    res.status(200).json(posts);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+// Obtener post por ID de usuario
+// router.get("/:id", async (req, res) => {
+//   try {
+//     const post = await Post.findById(req.params.id);
+//     res.status(200).json(post);
+//   } catch (err) {
+//     res.status(500).json(err);
+//   }
+// });
 
 module.exports = router;
