@@ -9,6 +9,9 @@ const cors = require("cors");  // Importar el paquete cors
 const userRoute = require("./routes/users");
 const authRoute = require("./routes/auth");
 const postRoute = require("./routes/posts");
+// const authRoute = require("./routes/auth");
+const conversationRoute = require("./routes/conversations");
+const messageRoute = require("./routes/messages");
 const multer = require("multer");
 const path = require("path");
 
@@ -42,6 +45,7 @@ app.use(helmet());
 app.use(morgan("common"));
 
 
+
 //Subida de archivos con Multer
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -66,3 +70,5 @@ app.post("/api/upload", upload.single("file"), (req, res) => {
 app.use("/api/users", userRoute);
 app.use("/api/auth", authRoute);
 app.use("/api/posts", postRoute);
+app.use("/api/conversations", conversationRoute);
+app.use("/api/messages", messageRoute);
