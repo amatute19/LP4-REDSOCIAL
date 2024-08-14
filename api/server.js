@@ -15,7 +15,8 @@ const conversationRoute = require("./routes/conversations");
 const messageRoute = require("./routes/messages");
 const multer = require("multer");
 const path = require("path");
-
+const eventRoute = require("./routes/event"); // new route
+const notificationRoute = require("./routes/notification"); // new route
 
 dotenv.config();//biblioteca para carga de variables de entorno desde archivos .env
 
@@ -73,3 +74,5 @@ app.use("/api/auth", authRoute);
 app.use("/api/posts", postRoute);
 app.use("/api/conversations", conversationRoute);
 app.use("/api/messages", messageRoute);
+app.use("/api/events", eventRoute); // new route
+app.use("/api/notifications", notificationRoute); // new route

@@ -6,7 +6,9 @@ import Messenger from "./pages/Messenger/Messenger";  // Asegúrate de que la ru
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext";
-
+import EventList from "./pages/event/EventList";
+import EventCreate from "./pages/event/EventCreate";
+import Dashboard from "./pages/dashboard/Dashboard";
 function App() {
   const { user } = useContext(AuthContext); // Obtiene el usuario del contexto de autenticación
 
@@ -18,6 +20,9 @@ function App() {
         <Route path="/register" element={user ? <Navigate to="/" /> : <Register />} /> {/* Redirige a Home si está autenticado, de lo contrario a Register */}
         <Route path="/messenger" element={user ? <Messenger /> : <Navigate to="/" />} /> {/* Redirige a Home si no está autenticado, de lo contrario a Messenger */}
         <Route path="/profile/:username" element={<Profile />} /> {/* Ruta accesible para todos */}
+        <Route path="/events/create" element={user ? <EventCreate /> : <Navigate to="/login" />} /> {/* Ruta para crear eventos */}
+        <Route path="/events" element={user ? <EventList /> : <Navigate to="/login" />} /> {/* Ruta para listar eventos */}
+        <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate to="/login" />} /> {/* Ruta para el dashboard */}      
       </Routes>
     </Router>
   );

@@ -12,6 +12,7 @@ export default function Topbar() {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+  const [notificationCount, setNotificationCount] = useState(0); // State to store notifications count
 
   const handleLogout = () => {
     // Limpiar el contexto de autenticación
@@ -35,6 +36,20 @@ export default function Topbar() {
     };
     fetchUsers();
   }, [searchTerm]);
+
+  useEffect(() => {
+    const fetchNotificationCount = async () => {
+      try {
+        const res = await axios.get(`/notifications/${user._id}`);
+        // Count the unread notifications
+        const unreadCount = res.data.filter(notification => !notification.isRead).length;
+        setNotificationCount(unreadCount);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchNotificationCount();
+  }, [user._id]);
 
   return (
     <div className="topbarContainer">
@@ -74,7 +89,9 @@ export default function Topbar() {
             <span className="topbarIconBadge">2</span>
           </div>
           <div className="topbarIconItem">
-            <Notifications />
+            <Link to={`/dashboard`} key={user._id}>
+                <Notifications />
+            </Link>
             <span className="topbarIconBadge">1</span>
           </div>
         </div>

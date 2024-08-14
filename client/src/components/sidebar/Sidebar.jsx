@@ -56,8 +56,10 @@ export default function Sidebar() {
           </li> */}
 
           <li className="sidebarListItem">
-            <Event className="sidebarIcon" />
-            <span className="sidebarListItemText">Events</span>
+            <Link to="/events/create" style={{ textDecoration: "none" }}>
+                <Event className="sidebarIcon" />
+                <span className="sidebarListItemText">Events</span>
+            </Link>
           </li>
 
           {/* <li className="sidebarListItem">

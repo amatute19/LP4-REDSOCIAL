@@ -32,6 +32,20 @@ export default function Rightbar({ user }) {
     getFriends();
   }, [user]);
 
+  const createFollowNotification = async (followerId, followedUserId) => {
+    try {
+      const response = await axios.post("/notifications/notifications", {
+        userId: followedUserId,
+        type: 'follow',
+        message: `Usuario ${followerId} comenzó a seguirte.`,
+        link: `/profile/${followerId}`
+      });
+      console.log('Notification created successfully:', response.data);
+    } catch (err) {
+      console.error('Error creating notification:', err.response ? err.response.data : err.message);
+    }
+  };
+
   const handleClick = async () => {
     try {
       if (followed) {
@@ -39,6 +53,7 @@ export default function Rightbar({ user }) {
         dispatch({ type: "UNFOLLOW", payload: user._id });
       } else {
         await axios.put(`/users/${user._id}/follow`, { userId: currentUser._id });
+        await createFollowNotification(currentUser._id, user._id);
         dispatch({ type: "FOLLOW", payload: user._id });
       }
       setFollowed(!followed);
@@ -50,15 +65,15 @@ export default function Rightbar({ user }) {
   const HomeRightbar = () => (
     <>
       <div className="birthdayContainer">
-        <img className="birthdayImg" src="assets/images.png" alt="Gift" />
+        <img className="birthdayImg" src="../assets/images.png" alt="Gift" />
         <span className="birthdayText">
           <b>Connect</b>  <b>with our photographer friends on PhotoFUSION</b>
         </span>
       </div>
       <ul>      
-      <img className="rightbarAd" src="assets/camera1.jpg" alt="Ad" />
-      <img className="rightbarAd" src="assets/camera2.jpg" alt="Ad" />
-      <img className="rightbarAd" src="assets/camera3.jpg" alt="Ad" />
+      <img className="rightbarAd" src="../assets/camera1.jpg" alt="Ad" />
+      <img className="rightbarAd" src="../assets/camera2.jpg" alt="Ad" />
+      <img className="rightbarAd" src="../assets/camera3.jpg" alt="Ad" />
       {/* <h4 className="rightbarTitle">Online Friends</h4>
       <ul className="rightbarFriendList">
         {Users.map((u) => (
