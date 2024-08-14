@@ -9,6 +9,7 @@ const cors = require("cors");  // Importar el paquete cors
 const userRoute = require("./routes/users");
 const authRoute = require("./routes/auth");
 const postRoute = require("./routes/posts");
+const reportRoute = require("./routes/report");
 // const authRoute = require("./routes/auth");
 const conversationRoute = require("./routes/conversations");
 const messageRoute = require("./routes/messages");

@@ -13,6 +13,7 @@ export default function Post({ post }) {
   const [comments, setComments] = useState(post.comments || []);
   const [showCommentForm, setShowCommentForm] = useState(false);
   const [comment, setComment] = useState("");
+  const [isReported, setIsReported] = useState(false); // Track if the post is reported
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
   const { user:currentUser } = useContext(AuthContext);
 
@@ -43,6 +44,7 @@ export default function Post({ post }) {
 
   useEffect(() => {
     setIsLiked(post.likes.includes(currentUser._id));
+    setIsReported(post.reports?.includes(currentUser._id)); // Check if the post is already reported
   }, [currentUser._id, post.likes]);
 
   useEffect(() => {
@@ -94,6 +96,20 @@ export default function Post({ post }) {
     }
   };
 
+  const handleReportPost = async () => {
+    if (isReported) {
+      return; // If already reported, do nothing
+    }
+    try {
+      await axios.post(`/posts/${post._id}/report`, {
+        userId: currentUser._id,
+      });
+      setIsReported(true); // Update state to indicate the post has been reported
+    } catch (err) {
+      console.error("Error reporting post:", err);
+    }
+  };
+
   return (
     <div className="post">
       <div className="postWrapper">
@@ -115,6 +131,15 @@ export default function Post({ post }) {
           </div>
           <div className="postTopRight">
             <MoreVert />
+            {!isReported ? (
+              <button className="reportButton" onClick={handleReportPost}>
+                Reportar Post
+              </button>
+            ) : (
+              <div className="alreadyReportedMessage">
+                Has reportado el Post
+              </div>
+            )}
           </div>
         </div>
         <div className="postCenter">
@@ -147,12 +172,14 @@ export default function Post({ post }) {
           </form>
         )}
         <div className="comments">
-          {Array.isArray(comments) && comments.map((comment, index) => (
-            <div key={index} className="comment">
-              <strong>{comment.username}:</strong> {comment.comment}
-            </div>
-          ))}
+          {Array.isArray(comments) && 
+            comments.map((comment, index) => (
+              <div key={index} className="comment">
+                <strong>{comment.username}:</strong> {comment.comment}
+              </div>
+            ))}
         </div>
+        {isReported && <div className="reportMessage">Post ha sido reportado.</div>}
       </div>
     </div>
   );

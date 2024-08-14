@@ -16,6 +16,18 @@ const CommentSchema = new mongoose.Schema(
 
 const PostSchema = new mongoose.Schema(
   {
+    reports: [
+      {
+        userId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'User',
+        },
+        date: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
     userId: {
       type: String,
       required: true,
